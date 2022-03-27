@@ -1,43 +1,35 @@
-from array import array
-from math import pow, floor, log10
-from collections import deque
+from collections import defaultdict
 
-def kthPalindrome(queries, intLength):
-
-    combinations = intLength // 2 + intLength % 2
-    maxPalindrom = pow(10,combinations - 1) * 9
-    palindromes = []
+def characterReplacement(s, k):
     
-    for query in queries:
+    characters = defaultdict(int)
+    size,operations = len(s),k
+    longest,left,right = 0,0,0
+    
+    while right < size:
         
-        palindrome = deque()
+        characters[s[right]] += 1
         
-        if query > maxPalindrom:
-            palindromes.append(-1)
-        else:
-            
-            for digit in range(intLength):
-                inner = (query // pow(10,digit) % 10) - 1
-                if inner == -1: 
-                    palindrome.appendleft(9)
-                else:
-                    palindrome.appendleft(int(inner))
-                
-            palindrome[0] += 1
-            size = len(palindrome)
-            
-            if size%2:
-                for index in range(size-2,-1,-1):
-                    palindrome.append(palindrome[index])
-            else:
-                for index in range(size-1,-1,-1):
-                    palindrome.append(palindrome[index])
-            
-        
-        palindrome and palindromes.append(int("".join([str(num) for num in palindrome])))
-        
-    return palindromes
+        if operations > 0 and s[left] != s[right]:
+            operations -= 1
 
-arr = [1,2,3,4,5,90]
-len = 3
-kthPalindrome(arr,len)
+        longest = max(longest,right - left + 1)    
+        
+        if operations == 0 and s[left] != s[right]:
+            operations -= 1
+        
+        while operations < 0 and left < right :
+            
+            characters[s[left]] -= 1
+            operations = right - left - characters[s[left]]
+            left += 1
+
+        right += 1
+    
+    
+        
+    return longest
+
+s = "AABABBA" 
+k = 1
+characterReplacement(s,k)
