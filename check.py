@@ -1,58 +1,46 @@
-from collections import defaultdict
+from math import ceil,pow,log10
+from string import digits
+def kthPalindrome(queries, intLength):
 
-def minimumOperations(nums):
+    palindromes = []
     
-    oddIndices, evenIndices = defaultdict(int),defaultdict(int)
-    evenMax,oddMax = [0,0],[0,0]
-    minOperations = len(nums)
-    
-    for index in range(len(nums)):
+    for query in queries:
         
-        if index % 2:
-            
-            oddIndices[nums[index]] += 1
+        nthPalindrome = pow(10,ceil(intLength/2) - 1) * 9
+        if query <= nthPalindrome:
 
-        else:
-            
-            evenIndices[nums[index]] += 1
-            
-    oddIndices[0],evenIndices[0] = 0,0
-    
-    for key in oddIndices.keys():
+            digits = ceil(log10(query))            
+            halfPalindrome = []
+            end = ceil(intLength/2)
 
-        if oddIndices[key] > oddIndices[oddMax[0]]:
-            oddMax[0],oddMax[1] = key,oddMax[0]
+            if digits == end:
+                halfPalindrome.append(int(query // pow(10,end-1))%10)
+            else:
+                halfPalindrome.append(1)
 
-        elif oddIndices[key] > oddIndices[oddMax[1]]:
-            oddMax[1] = key
-
-    for key in evenIndices.keys():
-
-        if evenIndices[key] > evenIndices[evenMax[0]]:
-            evenMax[0],evenMax[1] = key,evenMax[0]
-            
-        elif evenIndices[key] > evenIndices[evenMax[1]]:
-            evenMax[1] = key
+            for index in range(end-2,-1,-1):
+                value = int(query // pow(10,index))%10 - 1
+                if value == -1: 
+                    value = 9
+                halfPalindrome.append(value)
                 
-    if evenMax[0] != oddMax[0]:
-        
-        minOperations = len(nums) - evenIndices[evenMax[0]] - oddIndices[oddMax[0]]
-        
-    else:
-        
-        if evenIndices[evenMax[0]] > oddIndices[oddMax[0]]:
-
-            minOperations = len(nums) - evenIndices[evenMax[0]] - oddIndices[oddMax[1]]
-
-        elif evenIndices[evenMax[0]] == oddIndices[oddMax[0]]:
-
-            minOperations = len(nums) - evenIndices[evenMax[0]] - max(evenIndices[evenMax[1]],oddIndices[oddMax[1]])
-
+            halfPalindrome = [str(num) for num in halfPalindrome]
+            rightPalindrome = halfPalindrome[::-1]
+            print(rightPalindrome)
+            
+            num = ""
+            if intLength%2:
+                num = "".join([*halfPalindrome,*[rightPalindrome[i] for i in range(len(rightPalindrome)) if i > 0]])
+            else:
+                num = "".join([*halfPalindrome,*rightPalindrome])
+                
+            palindromes.append(int(num))
         else:
+            
+            palindromes.append(-1)
+            
+    return palindromes
 
-            minOperations = len(nums) - evenIndices[evenMax[1]] - oddIndices[oddMax[0]]
-        
-                    
-    return minOperations
-
-print(minimumOperations([1,2,2,2,2]))
+queries = [1,2,3,4,5,90] 
+intLength = 3
+print(kthPalindrome(queries,intLength))
