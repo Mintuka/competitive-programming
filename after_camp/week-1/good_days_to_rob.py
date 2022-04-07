@@ -20,3 +20,8 @@ class Solution:
                 increasing += 1 
             else:
                 increasing = 0
+            
+            if decreasing >= time and increasing >= time:
+                goodDays.append(i)
+        
+        return goodDays
