@@ -1,46 +1,54 @@
-from math import ceil,pow,log10
-from string import digits
-def kthPalindrome(queries, intLength):
-
-    palindromes = []
+def eventualSafeNodes(graph):
     
-    for query in queries:
+    #filter terminal nodes (empty lists)
+    #check if all neighbours of non terminal nodes are terminl nodes
+    
+    size      = len(graph)
+    terminals = set()
+    safe      = set()
+    visited   = [False]*size
+    
+    for i in range(size):
         
-        nthPalindrome = pow(10,ceil(intLength/2) - 1) * 9
-        if query <= nthPalindrome:
-
-            digits = ceil(log10(query))            
-            halfPalindrome = []
-            end = ceil(intLength/2)
-
-            if digits == end:
-                halfPalindrome.append(int(query // pow(10,end-1))%10)
-            else:
-                halfPalindrome.append(1)
-
-            for index in range(end-2,-1,-1):
-                value = int(query // pow(10,index))%10 - 1
-                if value == -1: 
-                    value = 9
-                halfPalindrome.append(value)
-                
-            halfPalindrome = [str(num) for num in halfPalindrome]
-            rightPalindrome = halfPalindrome[::-1]
-            print(rightPalindrome)
+        if not graph[i]:
+            terminals.add(i)
+    
+    for i  in range(size):
+        
+        isPossible = False
+        neighbours = 0
+        for neighbour in graph[i]:
             
-            num = ""
-            if intLength%2:
-                num = "".join([*halfPalindrome,*[rightPalindrome[i] for i in range(len(rightPalindrome)) if i > 0]])
-            else:
-                num = "".join([*halfPalindrome,*rightPalindrome])
-                
-            palindromes.append(int(num))
-        else:
+            isPossible = dfs(neighbour,terminals,visited,graph,isPossible)
+            if isPossible:
+                neighbours += 1
+        
+        if neighbours == len(graph[i]):
+            safe.add(i)
             
-            palindromes.append(-1)
-            
-    return palindromes
+    return safe
 
-queries = [1,2,3,4,5,90] 
-intLength = 3
-print(kthPalindrome(queries,intLength))
+def dfs(node,terminals,visited,graph,isPossible):
+    
+    if node in terminals:
+        return True
+    
+    visited[node] = True
+    isSafe = False
+    
+    for neighbour in graph[node]:
+        
+        if not visited[neighbour]:
+            isSafe = isPossible and dfs(neighbour,terminals,visited,graph,isSafe)
+            
+    visited[node] = False
+    
+    return isSafe
+
+
+graph = [[],[0,2,3,4],[3],[4],[]]
+eventualSafeNodes(graph)
+
+
+
+        
