@@ -15,6 +15,6 @@ class Solution:
                 res += right - left + 1
                 right += 1
             return res
-        
+
         good_subarrays = countSubarrays(k) - countSubarrays(k-1)
         return good_subarrays
