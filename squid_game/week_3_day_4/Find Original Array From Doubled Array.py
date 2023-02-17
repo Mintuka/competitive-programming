@@ -10,7 +10,6 @@ class Solution:
         for num in unique:
             doubled = num*2
             
-
             while doubled in count and num in count:
                 count[doubled] -= 1
                 count[num] -= 1
